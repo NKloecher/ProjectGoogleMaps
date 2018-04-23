@@ -45,8 +45,10 @@ public class MapsOpenHelper extends SQLiteOpenHelper {
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "TITLE TEXT," +
                     "DESCRIPTION TEXT," +
-                    "DATE TEXT," +
-                    "LOCATION TEXT)");
+                    "DATE INT," +
+                    "LOCATION TEXT," +
+                    "TRIP_ID INT," +
+                    "FOREIGN KEY (TRIP_ID) REFERENCES TRIP_LIST(_id))");
 
             db.execSQL("CREATE TABLE DIARY_LINKS (" +
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
