@@ -1,6 +1,5 @@
 package com.example.nicolai.project2.activities;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
