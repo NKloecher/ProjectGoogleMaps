@@ -37,6 +37,14 @@ public class TripStorage {
         return new TripCursorWrapper(db.query(TABLE_NAME, new String[] {_id, TITLE, DESCRIPTION, LOCATION, START_DATE, END_DATE}, null, null, null, null, null, null));
     }
 
+    public Trip get(long id){
+        SQLiteDatabase db = openHelper.getReadableDatabase();
+        TripCursorWrapper cursor = new TripCursorWrapper(db.query(TABLE_NAME, new String[]{_id, TITLE, DESCRIPTION, LOCATION,START_DATE,END_DATE},
+                "_id=?", new String[] {Long.toString(id)}, null, null, null, null));
+        cursor.moveToNext();
+        return cursor.get();
+    }
+
     public long insertTrip(String title, String description, LatLng location, Date startDate, Date endDate) {
         SQLiteDatabase db = openHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -63,7 +71,7 @@ public class TripStorage {
             Date startDate = new Date(getInt(getColumnIndex(START_DATE)));
             Date endDate = new Date(getInt(getColumnIndex(END_DATE)));
 
-            return new Trip(getString(getColumnIndex(TITLE)), getString(getColumnIndex(DESCRIPTION)), location, startDate, endDate);
+            return new Trip(getInt(getColumnIndex(_id)),getString(getColumnIndex(TITLE)), getString(getColumnIndex(DESCRIPTION)), location, startDate, endDate);
         }
     }
 }

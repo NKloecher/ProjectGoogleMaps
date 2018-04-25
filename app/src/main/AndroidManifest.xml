@@ -35,7 +35,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".activities.AddTripActivity"></activity>
+        <activity android:name=".activities.AddTripActivity" />
+        <activity
+            android:name=".activities.DiaryEntryActivity"
+            android:label="@string/title_activity_diary_entry" />
     </application>
 
 </manifest>

@@ -3,6 +3,8 @@ package com.example.nicolai.project2.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.nicolai.project2.R;
+
 public class AddTripActivity extends AppCompatActivity {
 
     @Override
