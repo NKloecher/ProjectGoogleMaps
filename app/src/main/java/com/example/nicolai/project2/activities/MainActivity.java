@@ -1,6 +1,15 @@
 package com.example.nicolai.project2.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +24,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -24,7 +35,8 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    GoogleMap map;
+    private GoogleMap map;
+    private LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +70,27 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private static final int ADD_ACTIVITY_REQUEST = 1;
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_ACTIVITY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long tripId = data.getLongExtra(AddTripActivity.TRIP_EXTRA, -1);
+
+                if (tripId == -1) {
+                    Log.d("ERROR", "no trip id");
+                    return;
+                }
+
+                new AddTripAsyncTask(tripId).execute();
+            }
+        }
+    }
+
+    public void onAddTripClick(View view) {
+        startActivityForResult(new Intent(this, AddTripActivity.class), ADD_ACTIVITY_REQUEST);
+    }
 
     class GetTripsAsyncTask extends AsyncTask<Void, Void,Void> {
 
@@ -72,17 +104,40 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
             TripStorage.TripCursorWrapper cursor = tripStorage.getAll();
             while (cursor.moveToNext()) {
                 Trip trip = cursor.get();
-                Marker m = map.addMarker(new MarkerOptions().position(trip.location).title(trip.title).snippet(trip.description));
-                m.setTag(trip);
-                builder.include(m.getPosition());
+                addTripToMap(trip);
             }
-
-            map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 170));
         }
+    }
+
+    private void addTripToMap(Trip trip) {
+        Resources resources = MainActivity.this.getResources();
+        Bitmap icon = BitmapFactory.decodeResource(resources, R.drawable.ic_place_black_24dp);
+        float scale = resources.getDisplayMetrics().density;
+        int textSize = (int) (15 * scale);
+        Rect bounds = new Rect();
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(textSize);
+        paint.setShadowLayer(2f, 0f, 1f, Color.WHITE);
+        paint.getTextBounds(trip.title, 0, trip.title.length(), bounds);
+
+        int bitmapHeight = Math.max(icon.getHeight(),bounds.height());
+
+        Bitmap bitmap = Bitmap.createBitmap(icon.getWidth()+bounds.width()*2+10, bitmapHeight, Bitmap.Config.ARGB_8888);
+
+        Canvas c = new Canvas(bitmap);
+
+        c.drawBitmap(icon, bounds.width(), 0, paint);
+        c.drawText(trip.title, bounds.width()+icon.getWidth(), bitmapHeight-10, paint);
+
+        Marker m = map.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(bitmap)).position(trip.location).title(trip.title).snippet(trip.description));
+        m.setTag(trip);
+
+        builder.include(m.getPosition());
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 170));
     }
 
     class InsertTestDataAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -134,6 +189,24 @@ public class MainActivity extends AppCompatActivity {
                     .findFragmentById(R.id.map);
 
             mapFragment.getMapAsync(new OnMapReady());
+        }
+    }
+
+    class AddTripAsyncTask extends AsyncTask<Void, Void, Trip> {
+        private long tripId;
+        public AddTripAsyncTask(long tripId) {
+            this.tripId = tripId;
+        }
+
+        @Override
+        protected Trip doInBackground(Void... voids) {
+            TripStorage storage = TripStorage.getInstance(MainActivity.this);
+            return storage.get(tripId);
+        }
+
+        @Override
+        protected void onPostExecute(Trip trip) {
+            addTripToMap(trip);
         }
     }
 }

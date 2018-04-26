@@ -9,25 +9,64 @@
     tools:context=".activities.AddTripActivity">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Title" />
+        android:hint="@string/title" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/desc"
         android:layout_width="match_parent"
         android:layout_height="125dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Description" />
+        android:hint="@string/description" />
 
+    <TextView
+        android:id="@+id/locationTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <Button
-        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="set location" />
+        android:text="@string/set_location"
+        android:onClick="onSetLocationClick"/>
+
+    <TextView
+        android:id="@+id/startDateTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_date"
+        android:onClick="onStartDateClick"/>
+
+    <TextView
+        android:id="@+id/endDateTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_date"
+        android:onClick="onEndDateClick"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_check_black_24dp"
+        android:onClick="onSaveClick"/>
+
 
 </LinearLayout>
