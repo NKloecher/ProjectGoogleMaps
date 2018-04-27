@@ -1,6 +1,9 @@
 package com.example.nicolai.project2.activities;
 
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -140,7 +144,9 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
                 String title = cursor.get().getTitle();
                 String description = cursor.get().getDescription();
 
-                Marker marker = mMap.addMarker(new MarkerOptions().position(position).title(title).snippet(description));
+                Resources resources = DiaryEntryActivity.this.getResources();
+                Bitmap icon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_map_marker), 90, 90, false);
+                Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(icon)).position(position).title(title).snippet(description));
                 builder.include(marker.getPosition());
             }
             if (!cursor.isBeforeFirst()){
