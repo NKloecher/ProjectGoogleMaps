@@ -1,6 +1,5 @@
 package com.example.nicolai.project2.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,17 +8,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.nicolai.project2.R;
-import com.example.nicolai.project2.model.DiaryEntry;
 import com.example.nicolai.project2.model.Trip;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
 import com.example.nicolai.project2.storage.TripStorage;
@@ -27,7 +23,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -63,13 +58,13 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void onInfoWindowClick(Marker marker) {
-            nicolaisTestMetode(marker);
+            startDiaryEntryActivity(marker);
 
         }
 
     }
 
-    public void nicolaisTestMetode(Marker marker){
+    public void startDiaryEntryActivity(Marker marker){
         Intent intent = new Intent(MainActivity.this, DiaryEntryActivity.class);
         Trip trip = (Trip) marker.getTag();
         if (trip != null){

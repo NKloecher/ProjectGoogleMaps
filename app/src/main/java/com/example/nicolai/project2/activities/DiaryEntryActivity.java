@@ -1,26 +1,19 @@
 package com.example.nicolai.project2.activities;
 
 
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.example.nicolai.project2.R;
-import com.example.nicolai.project2.model.DiaryEntry;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
-import com.example.nicolai.project2.storage.TripStorage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
