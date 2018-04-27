@@ -37,7 +37,7 @@ public class DiaryEntryStorage {
         ContentValues values = new ContentValues();
         values.put(TITLE, title);
         values.put(DESCRIPTION, description);
-        values.put(LOCATION, location.latitude + ", " + location.longitude);
+        values.put(LOCATION, location.latitude + "," + location.longitude);
         values.put(DATE, date.getTime());
         values.put(TRIP_ID, trip_id);
         return db.insert(TABLE_NAME,null,values);
@@ -75,14 +75,16 @@ public class DiaryEntryStorage {
         public DiaryEntry get(){
             if (isBeforeFirst() || isAfterLast()) return null;
 
-            String[] location = getString(getColumnIndex(LOCATION)).split(" ");
+            String[] location = getString(getColumnIndex(LOCATION)).split(",");
             LatLng latLng = new LatLng(Double.parseDouble(location[0]), Double.parseDouble(location[1]));
+            Date date = new Date(getInt(getColumnIndex(DATE)));
 
             return new DiaryEntry(
                     getInt(getColumnIndex(_id)),
                     getString(getColumnIndex(TITLE)),
                     getString(getColumnIndex(DESCRIPTION)),
                     latLng,
+                    date,
                     getInt(getColumnIndex(TRIP_ID))
             );
         }

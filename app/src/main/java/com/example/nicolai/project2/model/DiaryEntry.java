@@ -16,15 +16,19 @@ public class DiaryEntry {
     private Date date;
     private ArrayList<URL> links;
     private long trip_id;
-
-    public DiaryEntry(long id, String title, String description, LatLng location, long trip_id) {
+        //TODO Still need to figure out what to do about the weblinks --?
+    public DiaryEntry(long id, String title, String description, LatLng location,Date date, long trip_id) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.location = location;
+        this.date = date;
         this.trip_id = trip_id;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public long getId() {
         return id;

@@ -2,4 +2,6 @@
     <string name="app_name">Project 2</string>
     <string name="title_activity_maps_view">Map</string>
     <string name="title_activity_diary_entry">Map</string>
+    <string name="main_title">Travel Diary</string>
+    <string name="app_main_name">Travel Diary</string>
 </resources>

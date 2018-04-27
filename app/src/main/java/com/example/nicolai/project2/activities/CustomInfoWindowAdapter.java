@@ -28,6 +28,8 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         this.inflater = inflater;
     }
 
+
+
     @Override
     public View getInfoWindow(Marker marker) {
         return null;
@@ -47,11 +49,18 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
             titleText.setSpan(new ForegroundColorSpan(Color.BLACK),0,titleText.length(),0);
             titleUi.setText(titleText);
         }
+
         //TODO Style contents ------
         String desc = marker.getSnippet();
-        String diaryEntries;
         TextView descUi = contents.findViewById(R.id.snippet);
-        descUi.setText(marker.getSnippet());
+        if (desc != null){
+            SpannableString descText = new SpannableString(desc);
+            descText.setSpan(new ForegroundColorSpan(Color.BLACK),0,descText.length(),0);
+            descUi.setText(descText);
+        }
+
+        String diaryEntries;
+
 
         return contents;
     }
