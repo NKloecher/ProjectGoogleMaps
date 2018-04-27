@@ -20,6 +20,9 @@ public class Trip {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+    public Trip() {
+
+    }
 
 
 
