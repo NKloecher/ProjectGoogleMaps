@@ -4,4 +4,10 @@
     <string name="title_activity_diary_entry">Map</string>
     <string name="main_title">Travel Diary</string>
     <string name="app_main_name">Travel Diary</string>
+    <string name="delete_current_trip">Fjern rejsen %s</string>
+    <string name="liste">Vis som liste</string>
+    <string name="show_as_map">Vis på kort</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

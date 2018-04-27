@@ -1,10 +1,13 @@
 package com.example.nicolai.project2.activities;
 
+
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.nicolai.project2.R;
 import com.example.nicolai.project2.model.DiaryEntry;
@@ -38,12 +42,14 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     //TODO cont -> Make a custom infoView to handle it? or Other solution?
 
     //TODO style toolbar + ContextMenu (delete trip) -> Can't context menu infowindow
+    //TODO 27/04 -> ContextMenu onOptionsItemSelected
     //TODO setMapToolbarEnabled(boolean) -> for at fjerne original funktioner
 
     //TODO Ambitious -> Make both a listview and the map-view -> can change via toolbar context menu
 
     public static final String TRIP_TITLE = "TRIP_TITLE";
     public static final String TRIP_ID = "TRIP_ID"; //trip id for diary selection
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,11 +62,34 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         supportActionBar.setTitle(getIntent().getStringExtra(TRIP_TITLE));
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-
-        Log.d("debug", Long.toString(getIntent().getLongExtra(TRIP_ID,-1)));
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.diary_map);
         mapFragment.getMapAsync(this);
+    }
+
+    public void changeToMap(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        SupportMapFragment fragment = new SupportMapFragment();
+        transaction.add(R.id.diary_map, fragment, "");
+        transaction.commit();
+        mapFragment = fragment;
+        mapFragment.getMapAsync(this);
+    }
+
+    public void changeToList(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        DiaryEntryFragment fragment = new DiaryEntryFragment();
+        Bundle bundle = new Bundle();
+        bundle.putLong(TRIP_ID, getIntent().getLongExtra(TRIP_ID,-1));
+        fragment.setArguments(bundle);
+
+        transaction.add(R.id.diary_map, fragment, "");
+        transaction.commit();
+
     }
 
     @Override
@@ -71,8 +100,27 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem test = menu.findItem(R.id.diary_entry_menu_delete_action);
+        String deleteActionTitle = getResources().getString(R.string.delete_current_trip,
+        getIntent().getStringExtra(TRIP_TITLE));
+        test.setTitle(deleteActionTitle);
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.diary_entry_menu_change_to_listview_action:
+                changeToList();
+                return true;
+            case R.id.diary_entry_menu_change_to_map_action:
+                changeToMap();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

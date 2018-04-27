@@ -2,9 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/testAction"
-        android:title="testMenu"
+        android:id="@+id/diary_entry_menu_button"
+        android:title=""
         app:showAsAction="always"
-        android:icon="@drawable/ic_menu_black_24dp"
-        />
+        android:icon="@drawable/ic_menu_black_24dp">
+
+        <menu>
+            <item
+                android:id="@+id/diary_entry_menu_delete_action"
+                android:title="@string/delete_current_trip"
+                app:showAsAction="ifRoom"/>
+            <item
+                android:id="@+id/diary_entry_menu_change_to_listview_action"
+                android:title="@string/liste"/>
+            <item
+                android:id="@+id/diary_entry_menu_change_to_map_action"
+                android:title="@string/show_as_map"/>
+        </menu>
+
+
+    </item>
+
+
 </menu>
