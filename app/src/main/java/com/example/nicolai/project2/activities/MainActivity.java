@@ -46,9 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getApplicationContext().deleteDatabase("TRIP_LIST");
         new InsertTestDataAsyncTask().execute();
-        Intent i = new Intent(this, ContactGroupListActivity.class);
-        i.putExtra(ContactGroupListActivity.DIARY_ENTRY_ID_EXTRA, 1);
-        startActivity(i);
     }
 
     public void startDiaryEntryActivity(Marker marker){
