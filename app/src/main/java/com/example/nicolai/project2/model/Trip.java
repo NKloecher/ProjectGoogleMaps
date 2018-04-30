@@ -2,6 +2,7 @@ package com.example.nicolai.project2.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Trip {
@@ -9,10 +10,10 @@ public class Trip {
     public String title;
     public String description;
     public LatLng location;
-    public Date startDate;
+    public LocalDate startDate;
     public Date endDate;
 
-    public Trip(long id, String title, String description, LatLng location, Date startDate, Date endDate) {
+    public Trip(long id, String title, String description, LatLng location, LocalDate startDate, Date endDate) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -23,8 +24,6 @@ public class Trip {
     public Trip() {
 
     }
-
-
 
     @Override
     public String toString() {

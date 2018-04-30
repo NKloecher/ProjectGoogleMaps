@@ -29,21 +29,22 @@ import java.util.Date;
 public class AddDiaryEntryActivity extends AppCompatActivity {
 
     public static final String ENTRY_ID = "ENTRY_ID";
-    public static final String TRIP_ID = "TRIP_ID";
     DatePickerDialog dialog;
 
     private LatLng location;
     private Date date;
-    long trip_id;
+    private long trip_id;
+    private long entry_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_diary_entry);
 
-        Log.d("debug",getIntent().getLongExtra(ENTRY_ID,-1)+": entry id");
-        if (getIntent().getLongExtra(ENTRY_ID,-1) != -1){
-            new FillTemplateAsyncTask(getIntent().getLongExtra(ENTRY_ID,-1)).execute();
+        entry_id = getIntent().getLongExtra(ENTRY_ID, -1);
+        Log.d("debug", entry_id +": entry id");
+        if (entry_id != -1){
+            new FillTemplateAsyncTask(entry_id).execute();
         }
 
         Calendar cal = Calendar.getInstance();
@@ -70,9 +71,9 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
         dialog.setOnDateSetListener(new com.takisoft.datetimepicker.DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(com.takisoft.datetimepicker.widget.DatePicker view, int year, int month, int dayOfMonth) {
-                date = new Date(String.format("%s/%s/%s",year, month, dayOfMonth));
+                date = new Date(year, month, dayOfMonth);
                 TextView startDateTxt = findViewById(R.id.dateTxt);
-                startDateTxt.setText(year + "/" + month + "/" + dayOfMonth); //Placeholders here
+                startDateTxt.setText(year + "/" + (month+1) + "/" + dayOfMonth); //Placeholders here
             }
         });
         dialog.show();
@@ -95,44 +96,43 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
         }
     }
 
-    class FillTemplateAsyncTask extends AsyncTask<Void, Void,Void>{
+    public void onSendAsMailClick(View view) {
+        Intent i = new Intent(this, ContactGroupListActivity.class);
+        i.putExtra(ContactGroupListActivity.DIARY_ENTRY_ID_EXTRA, entry_id);
+        startActivity(i);
+    }
+
+    class FillTemplateAsyncTask extends AsyncTask<Void, Void,DiaryEntry>{
         long id;
         public FillTemplateAsyncTask(long id) {
             this.id = id;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected DiaryEntry doInBackground(Void... voids) {
             DiaryEntryStorage storage = DiaryEntryStorage.getInstance(AddDiaryEntryActivity.this);
-            final DiaryEntry entry = storage.get(id);
-            Log.d("debug", entry.toString());
+            return storage.get(id);
+        }
 
+        @Override
+        protected void onPostExecute(DiaryEntry entry) {
             final EditText titleText = findViewById(R.id.title);
             final EditText descText = findViewById(R.id.desc);
             final TextView locationText = findViewById(R.id.locationTxt);
             final TextView dateText = findViewById(R.id.dateTxt);
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                titleText.setText(entry.getTitle());
-                descText.setText(entry.getDescription());
+            titleText.setText(entry.getTitle());
+            descText.setText(entry.getDescription());
 
 //                locationText.setText(entry.getLocation().toString());
-                locationText.setText(entry.getTitle());
-                location = entry.getLocation();
+            locationText.setText(entry.getTitle());
+            location = entry.getLocation();
 
-                dateText.setText(String.format("%s/%s/%s", entry.getDate().getYear()+1900,entry.getDate().getMonth()+1,
-                        entry.getDate().getDate()));
-                date = entry.getDate();
-                trip_id = entry.getTrip_id();
-                    //TODO dates..... so fucked.....
-
-                }
-            });
-            return null;
+            dateText.setText(String.format("%s/%s/%s", date.getYear()+1900,date.getMonth()+1,date.getDate()));
+            date = entry.getDate();
+            trip_id = entry.getTrip_id();
+            //TODO dates..... so fucked.....
         }
-
     }
 
     private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Long> {
@@ -143,7 +143,6 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-
             EditText titleText = findViewById(R.id.title);
             title = titleText.getText().toString();
 
