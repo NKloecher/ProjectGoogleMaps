@@ -41,4 +41,18 @@ public class DiaryEntry {
     public String getTitle() {
         return title;
     }
+
+    @Override
+    public String toString() {
+        String s = title + " " + date + " " + location + "\n" +
+            description + "\n";
+
+        if (links != null) {
+            for (URL link : links) {
+                s += link.toString() + "\n";
+            }
+        }
+
+        return s;
+    }
 }
