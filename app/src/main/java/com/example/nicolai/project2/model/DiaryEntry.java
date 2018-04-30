@@ -50,8 +50,22 @@ public class DiaryEntry {
         return trip_id;
     }
 
+//    @Override
+//    public String toString() {
+//        return String.format("%s, %s - %s", title, location.toString(), date.toString());
+//    }
+
     @Override
     public String toString() {
-        return String.format("%s, %s - %s", title, location.toString(), date.toString());
+        String s = title + " " + date + " " + location + "\n" +
+            description + "\n";
+
+        if (links != null) {
+            for (URL link : links) {
+                s += link.toString() + "\n";
+            }
+        }
+
+        return s;
     }
 }
