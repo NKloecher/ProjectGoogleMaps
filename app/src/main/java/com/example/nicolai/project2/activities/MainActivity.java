@@ -29,7 +29,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,24 +46,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getApplicationContext().deleteDatabase("TRIP_LIST");
         new InsertTestDataAsyncTask().execute();
-    }
-
-
-    class OnMapReady implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
-
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-            map = googleMap;
-            new GetTripsAsyncTask().execute();
-            map.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
-            map.setOnInfoWindowClickListener(this);
-        }
-        @Override
-        public void onInfoWindowClick(Marker marker) {
-            startDiaryEntryActivity(marker);
-
-        }
-
+        Intent i = new Intent(this, ContactGroupListActivity.class);
+        i.putExtra(ContactGroupListActivity.DIARY_ENTRY_ID_EXTRA, 1);
+        startActivity(i);
     }
 
     public void startDiaryEntryActivity(Marker marker){
@@ -97,26 +81,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onAddTripClick(View view) {
         startActivityForResult(new Intent(this, AddTripActivity.class), ADD_ACTIVITY_REQUEST);
-    }
-
-    class GetTripsAsyncTask extends AsyncTask<Void, Void,Void> {
-
-        TripStorage tripStorage;
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            tripStorage = TripStorage.getInstance(MainActivity.this);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            TripStorage.TripCursorWrapper cursor = tripStorage.getAll();
-            while (cursor.moveToNext()) {
-                Trip trip = cursor.get();
-                addTripToMap(trip);
-            }
-        }
     }
 
     private void addTripToMap(Trip trip) {
@@ -258,6 +222,43 @@ public class MainActivity extends AppCompatActivity {
 
             mapFragment.getMapAsync(new OnMapReady());
         }
+    }
+
+    class GetTripsAsyncTask extends AsyncTask<Void, Void,Void> {
+
+        TripStorage tripStorage;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            tripStorage = TripStorage.getInstance(MainActivity.this);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            TripStorage.TripCursorWrapper cursor = tripStorage.getAll();
+            while (cursor.moveToNext()) {
+                Trip trip = cursor.get();
+                addTripToMap(trip);
+            }
+        }
+    }
+
+    class OnMapReady implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            map = googleMap;
+            new GetTripsAsyncTask().execute();
+            map.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
+            map.setOnInfoWindowClickListener(this);
+        }
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            startDiaryEntryActivity(marker);
+
+        }
+
     }
 
     class AddTripAsyncTask extends AsyncTask<Void, Void, Trip> {
