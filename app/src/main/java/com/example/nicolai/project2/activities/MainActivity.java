@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.example.nicolai.project2.Fragments.CustomInfoWindowAdapter;
 import com.example.nicolai.project2.R;
 import com.example.nicolai.project2.model.Trip;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
@@ -29,7 +30,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                     "We visited the beautiful cathedral and tons of other stuff. The people are very friendly" +
                             ", who knew!",
                     new LatLng(56.162939,10.203921),
-                    new Date(1496786400000L),
+                    new Date("2017/6/7"),
                     kbh);
             diaryEntryStorage.insert(
                     "Odense",

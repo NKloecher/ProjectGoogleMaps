@@ -45,7 +45,7 @@ public class MapsOpenHelper extends SQLiteOpenHelper {
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "TITLE TEXT," +
                     "DESCRIPTION TEXT," +
-                    "DATE INT," +
+                    "DATE TEXT," +
                     "LOCATION TEXT," +
                     "TRIP_ID INT," +
                     "FOREIGN KEY (TRIP_ID) REFERENCES TRIP_LIST(_id))");

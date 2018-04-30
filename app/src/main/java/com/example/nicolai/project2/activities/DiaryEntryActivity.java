@@ -1,6 +1,7 @@
 package com.example.nicolai.project2.activities;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,12 +12,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.example.nicolai.project2.Fragments.CustomInfoWindowAdapter;
+import com.example.nicolai.project2.Fragments.DiaryEntryListFragment;
 import com.example.nicolai.project2.R;
+import com.example.nicolai.project2.model.DiaryEntry;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,6 +50,8 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     public static final String TRIP_TITLE = "TRIP_TITLE";
     public static final String TRIP_ID = "TRIP_ID"; //trip id for diary selection
     private SupportMapFragment mapFragment;
+    private DiaryEntryListFragment listFragment;
+    private LatLngBounds.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,8 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        DiaryEntryFragment fragment = new DiaryEntryFragment();
+
+        DiaryEntryListFragment fragment = new DiaryEntryListFragment();
         Bundle bundle = new Bundle();
         bundle.putLong(TRIP_ID, getIntent().getLongExtra(TRIP_ID,-1));
         fragment.setArguments(bundle);
@@ -88,6 +95,7 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         transaction.add(R.id.diary_map, fragment, "");
         transaction.commit();
         invalidateOptionsMenu();
+        listFragment = fragment;
         fragmentIsMap = false;
     }
 
@@ -135,8 +143,52 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         new getDiaryEntriesAsyncTask().execute();
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
     }
+
+    private static final int ADD_ENTRY_REQUEST = 2;
+    private static final int UPDATE_ENTRY_REQUEST = 3;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == UPDATE_ENTRY_REQUEST){
+            if (resultCode == RESULT_OK){
+                //update entry + list
+                long id = data.getLongExtra(AddDiaryEntryActivity.ENTRY_ID,-1);
+                if (id == -1){
+                    throw new Error("fuck");
+                }
+                new UpdateEntriesAsyncTask(id).execute();
+            }
+        }
+        if (requestCode == ADD_ENTRY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                long id = data.getLongExtra(AddDiaryEntryActivity.ENTRY_ID,-1);
+                if (id == -1){
+                    throw new Error("fuck");
+                }
+                new UpdateEntriesAsyncTask(id).execute();
+            }
+        }
+    }
+
+    private void addEntryToMap(DiaryEntry entry) {
+        Resources resources = DiaryEntryActivity.this.getResources();
+        Bitmap icon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_map_marker), 90, 90, false);
+
+        Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(icon)).position(entry.getLocation())
+                        .title(entry.getTitle()).snippet(entry.getDescription()));
+        builder.include(marker.getPosition());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
+    }
+
+    public void addEntryAction(View view){
+        Intent intent = new Intent(DiaryEntryActivity.this, AddDiaryEntryActivity.class);
+        intent.putExtra(TRIP_ID, getIntent().getLongExtra(TRIP_ID,-1));
+        startActivityForResult(intent, ADD_ENTRY_REQUEST);
+    }
+
 
     public class getDiaryEntriesAsyncTask extends AsyncTask<Void,Void,DiaryEntryStorage.DiaryEntryWrapper>{
         private DiaryEntryStorage storage;
@@ -148,20 +200,42 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
 
         @Override
         protected void onPostExecute(DiaryEntryStorage.DiaryEntryWrapper cursor) {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-            while (cursor.moveToNext()){
-                LatLng position = cursor.get().getLocation();
-                String title = cursor.get().getTitle();
-                String description = cursor.get().getDescription();
+            builder = new LatLngBounds.Builder();
+                while (cursor.moveToNext()) {
+                    LatLng position = cursor.get().getLocation();
+                    String title = cursor.get().getTitle();
+                    String description = cursor.get().getDescription();
 
-                Resources resources = DiaryEntryActivity.this.getResources();
-                Bitmap icon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_map_marker), 90, 90, false);
-                Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(icon)).position(position).title(title).snippet(description));
-                builder.include(marker.getPosition());
-            }
-            if (!cursor.isBeforeFirst()){
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),300));
+                    Resources resources = DiaryEntryActivity.this.getResources();
+                    Bitmap icon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_map_marker), 90, 90, false);
+                    Marker marker = mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromBitmap(icon)).position(position).title(title).snippet(description));
+                    builder.include(marker.getPosition());
+                }
+                if (!cursor.isBeforeFirst()) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 300));
+                }
+        }
+    }
+
+    class UpdateEntriesAsyncTask extends AsyncTask<Void, Void, DiaryEntry> {
+        private long entryId;
+
+        public UpdateEntriesAsyncTask(long entryId) {
+            this.entryId = entryId;
+        }
+
+        @Override
+        protected DiaryEntry doInBackground(Void... voids) {
+            DiaryEntryStorage storage = DiaryEntryStorage.getInstance(DiaryEntryActivity.this);
+            return storage.get(entryId);
+        }
+
+        @Override
+        protected void onPostExecute(DiaryEntry diaryEntry) {
+            if (fragmentIsMap) addEntryToMap(diaryEntry);
+            else {
+                listFragment.runAsync();
             }
         }
     }

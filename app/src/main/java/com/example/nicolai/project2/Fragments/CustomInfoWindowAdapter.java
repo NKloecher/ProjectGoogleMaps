@@ -1,4 +1,4 @@
-package com.example.nicolai.project2.activities;
+package com.example.nicolai.project2.Fragments;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -24,7 +24,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private View contents;
     private LayoutInflater inflater;
 
-    CustomInfoWindowAdapter(LayoutInflater inflater){
+    public CustomInfoWindowAdapter(LayoutInflater inflater){
         this.inflater = inflater;
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.nicolai.project2.model.DiaryEntry;
 import com.google.android.gms.maps.model.LatLng;
@@ -38,15 +39,22 @@ public class DiaryEntryStorage {
         values.put(TITLE, title);
         values.put(DESCRIPTION, description);
         values.put(LOCATION, location.latitude + "," + location.longitude);
-        values.put(DATE, date.getTime());
+        String dateTT = String.format("%s/%s/%s", date.getYear()+1900,date.getMonth()+1,date.getDate());
+        values.put(DATE, dateTT);
         values.put(TRIP_ID, trip_id);
         return db.insert(TABLE_NAME,null,values);
     }
 
 
-    public long update(DiaryEntry diaryEntry, ContentValues values) {
+    public long update(long id, String title, String description, LatLng location, Date date) {
         SQLiteDatabase db = openHelper.getWritableDatabase();
-        return db.update(TABLE_NAME,values, "_id=?", new String[] {Long.toString(diaryEntry.getId())});
+        ContentValues values = new ContentValues();
+        values.put(TITLE, title);
+        values.put(DESCRIPTION, description);
+        values.put(LOCATION, location.latitude + "," + location.longitude);
+        String dateTT = String.format("%s/%s/%s", date.getYear()+1900,date.getMonth()+1,date.getDate());
+        values.put(DATE, dateTT);
+        return db.update(TABLE_NAME,values, "_id=?", new String[] {Long.toString(id)});
     }
 
     public long remove(long id) {
@@ -77,8 +85,8 @@ public class DiaryEntryStorage {
 
             String[] location = getString(getColumnIndex(LOCATION)).split(",");
             LatLng latLng = new LatLng(Double.parseDouble(location[0]), Double.parseDouble(location[1]));
-            Date date = new Date(getInt(getColumnIndex(DATE)));
-
+            Date date = new Date(getString(getColumnIndex(DATE)));
+            Log.d("debug", "Wrapper Date: " + date.toString());
             return new DiaryEntry(
                     getInt(getColumnIndex(_id)),
                     getString(getColumnIndex(TITLE)),

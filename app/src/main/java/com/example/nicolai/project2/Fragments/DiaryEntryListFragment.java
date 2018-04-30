@@ -1,10 +1,10 @@
-package com.example.nicolai.project2.activities;
+package com.example.nicolai.project2.Fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -18,20 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.nicolai.project2.R;
+import com.example.nicolai.project2.activities.AddDiaryEntryActivity;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
 
-import java.sql.Time;
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
-public class DiaryEntryFragment extends android.support.v4.app.Fragment {
+public class DiaryEntryListFragment extends android.support.v4.app.Fragment {
 
     private long trip_id;
     private SimpleCursorAdapter adapter;
 
-    public DiaryEntryFragment() {
+    public DiaryEntryListFragment() {
 
     }
 
@@ -39,7 +36,7 @@ public class DiaryEntryFragment extends android.support.v4.app.Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         trip_id = getArguments().getLong("TRIP_ID",-1);
-        new getDiaryEntriesAsyncTask().execute();
+        new GetDiaryEntriesAsyncTask().execute();
     }
 
     @Nullable
@@ -70,7 +67,11 @@ public class DiaryEntryFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    class getDiaryEntriesAsyncTask extends AsyncTask<Void,Void,DiaryEntryStorage.DiaryEntryWrapper>{
+    public void runAsync(){
+        new GetDiaryEntriesAsyncTask().execute();
+    }
+
+    class GetDiaryEntriesAsyncTask extends AsyncTask<Void,Void,DiaryEntryStorage.DiaryEntryWrapper>{
 
         private final long CEST_CORRECTION = 7200 * 1000;
         private DiaryEntryStorage storage;
@@ -96,6 +97,14 @@ public class DiaryEntryFragment extends android.support.v4.app.Fragment {
                 ListView list = view.findViewById(R.id.diary_fragment_list);
                 list.setAdapter(adapter);
                 registerForContextMenu(list); //todo clickListener too? or maybe just add all to contextmenu
+                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(getContext(), AddDiaryEntryActivity.class);
+                        intent.putExtra(AddDiaryEntryActivity.ENTRY_ID, id);
+                        startActivityForResult(intent, 3);
+                    }
+                });
             } else {
                 adapter.changeCursor(diaryEntryWrapper);
             }
@@ -104,10 +113,12 @@ public class DiaryEntryFragment extends android.support.v4.app.Fragment {
                     @Override
                     public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
                         if (cursor.getColumnIndex(DiaryEntryStorage.DATE) == columnIndex){
-                            long dateTime = Long.parseLong(cursor.getString(columnIndex));
-                            long actualDate = dateTime + CEST_CORRECTION; //correction for GMT -> CEST
+                            String t = cursor.getString(columnIndex);
                             TextView textView = (TextView) view;
-                            textView.setText(DateFormat.getDateInstance(DateFormat.LONG).format(actualDate));
+                            textView.setText(t);
+//                            long dateTime = Long.parseLong(cursor.getString(columnIndex));
+//                            long actualDate = dateTime + CEST_CORRECTION; //correction for GMT -> CEST
+//                            textView.setText(DateFormat.getDateInstance(DateFormat.LONG).format(actualDate));
                             return true;
                         }
                         return false;
@@ -130,12 +141,12 @@ public class DiaryEntryFragment extends android.support.v4.app.Fragment {
         protected Void doInBackground(Void... voids) {
             storage = DiaryEntryStorage.getInstance(getContext());
             storage.remove(id);
-            new getDiaryEntriesAsyncTask().execute();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            new GetDiaryEntriesAsyncTask().execute();
             Toast.makeText(getContext(), "Notatet er blevet slettet", Toast.LENGTH_LONG).show();
         }
     }

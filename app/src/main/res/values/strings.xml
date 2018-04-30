@@ -13,4 +13,5 @@
     <string name="set_location">set location</string>
     <string name="start_date">start date</string>
     <string name="context_delete__entry">Slet</string>
+    <string name="select_date">Select date</string>
 </resources>

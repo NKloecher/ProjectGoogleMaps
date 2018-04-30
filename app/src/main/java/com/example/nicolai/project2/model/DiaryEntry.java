@@ -26,6 +26,10 @@ public class DiaryEntry {
         this.trip_id = trip_id;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -40,5 +44,14 @@ public class DiaryEntry {
 
     public String getTitle() {
         return title;
+    }
+
+    public long getTrip_id() {
+        return trip_id;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s, %s - %s", title, location.toString(), date.toString());
     }
 }
