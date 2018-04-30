@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,17 +27,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-
-    //TODO Decide -> Query db for info on Trip? or Just pass along id?
-    //TODO cont -> need id for getAll(trip_id) in DiaryEntryStorage. Other info needed?
-    //TODO cont -> might need title etc. when action/toolbar comes into play
+    private boolean fragmentIsMap = true;
 
     //TODO Decide -> Size of desc for DiaryEntries might be too big for snippet
     //TODO cont -> Make a custom infoView to handle it? or Other solution?
 
     //TODO style toolbar + ContextMenu (delete trip) -> Can't context menu infowindow
-    //TODO 27/04 -> ContextMenu onOptionsItemSelected
+    //TODO 27/04 -> ContextMenu onOptionsItemSelected ->
     //TODO setMapToolbarEnabled(boolean) -> for at fjerne original funktioner
+    //TODO Change OptionsMenu depending on fragment -> MoveToList or MoveToMap
 
     //TODO Ambitious -> Make both a listview and the map-view -> can change via toolbar context menu
 
@@ -69,6 +68,8 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         transaction.commit();
         mapFragment = fragment;
         mapFragment.getMapAsync(this);
+        invalidateOptionsMenu();
+        fragmentIsMap = true;
     }
 
     public void changeToList(){
@@ -82,7 +83,8 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
 
         transaction.add(R.id.diary_map, fragment, "");
         transaction.commit();
-
+        invalidateOptionsMenu();
+        fragmentIsMap = false;
     }
 
     @Override
@@ -98,7 +100,16 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         String deleteActionTitle = getResources().getString(R.string.delete_current_trip,
         getIntent().getStringExtra(TRIP_TITLE));
         test.setTitle(deleteActionTitle);
-
+        MenuItem itemMap = menu.findItem(R.id.diary_entry_menu_change_to_map_action);
+        MenuItem itemList = menu.findItem(R.id.diary_entry_menu_change_to_listview_action);
+        if (fragmentIsMap){
+            itemMap.setVisible(false);
+            itemList.setVisible(true);
+        }
+        else {
+            itemMap.setVisible(true);
+            itemList.setVisible(false);
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -120,7 +131,7 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         new getDiaryEntriesAsyncTask().execute();
-
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getLayoutInflater()));
     }
 
     public class getDiaryEntriesAsyncTask extends AsyncTask<Void,Void,DiaryEntryStorage.DiaryEntryWrapper>{

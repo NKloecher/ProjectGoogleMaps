@@ -14,7 +14,7 @@ public class DiaryEntry {
     private String description;
     private LatLng location;
     private Date date;
-    private ArrayList<URL> links;
+    private ArrayList<URL> links; //maybe not needed, just query db--- need to make db first
     private long trip_id;
         //TODO Still need to figure out what to do about the weblinks --?
     public DiaryEntry(long id, String title, String description, LatLng location,Date date, long trip_id) {

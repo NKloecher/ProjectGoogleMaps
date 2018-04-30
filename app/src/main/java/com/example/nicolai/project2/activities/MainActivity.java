@@ -29,9 +29,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+
+    //Todo fucking dates man
 
     private GoogleMap map;
     private LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -156,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
 
             storage.insertTrip(
                     "Moskva",
-                    "Sommeren 2017",
+                    "Sommeren 2014",
                     new LatLng(55.751244, 37.618423),
                     new Date(1496275200),
                     new Date(1502275200)
@@ -165,7 +168,15 @@ public class MainActivity extends AppCompatActivity {
                     "LONGEVITY TEST",
                     "THIS IS A TEST TO SEE HOW LONG THE SNIPPET" +
                             "EXPANDS UNDE!!!!R PRESSURE AND IF IT EVER JUST CONCATENATES THE CONTENTS," +
-                            "I THINK JUST A FEW MORE LINES SHOULD DO IT!",
+                            "I THINK JUST A FEW MORE LINES SHOULD DO IT! TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST" +
+                            " TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST",
                     new LatLng(50,50),
                     new Date(0),
                     new Date(0)
@@ -174,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     "London",
                     "test description",
                     new LatLng(51.509865, -0.118092),
-                    new Date(new Date(1970,1,1).getTime()),
+                    new Date(0),
                     new Date(0)); //TODO decide on date format?
             long kbh = storage.insertTrip(
                     "København",
@@ -188,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     "London, monday",
                     "We started out wonderfully at te B&B wtih ham and sausages",
                     new LatLng(51.509865, -0.118092),
-                    new Date(1970,1,1),
+                    new Date("1970/1/1"),
                     london);
             diaryEntryStorage.insert(
                     "London, Tueday",
@@ -197,40 +208,39 @@ public class MainActivity extends AppCompatActivity {
                             "The skies might be grey but the people are so refreshing to talk to, they always have a smile for strangers passing by." +
                             "High hopes for the last day!",
                     new LatLng(51.501476, -0.140634),
-                    new Date(1970,1,1),
+                    new Date("1970/1/1"),
                     london);
             diaryEntryStorage.insert(
                     "London, last day",
                     "I felled a tear as we left, we will have to return again soon!",
                     new LatLng(51.509865, -0.128092),
-                    new Date(1970,1,1),
+                    new Date("1970/1/1"),
                     london);
-
 
             diaryEntryStorage.insert(
                     "Århus",
                     "We visited the beautiful cathedral and tons of other stuff. The people are very friendly" +
                             ", who knew!",
                     new LatLng(56.162939,10.203921),
-                    new Date(2017,6,7),
+                    new Date(1496786400000L),
                     kbh);
             diaryEntryStorage.insert(
                     "Odense",
                     "Odense is awesome",
                     new LatLng(55.403756,10.402370),
-                    new Date(2017, 6, 9),
+                    new Date(1496959200000L),
                     kbh);
             diaryEntryStorage.insert(
                     "Slagelse",
                     "A quaint little town bustling with activity",
                     new LatLng(55.40276, 11.35459),
-                    new Date(2017,6,10),
+                    new Date(1497045600000L),
                     kbh);
             diaryEntryStorage.insert(
                     "København",
                     "Wunderschöne Koben-Hagen, das ist naturlich ein freuer stadt!",
                     new LatLng(55.676098, 12.568337),
-                    new Date(2017,6,11),
+                    new Date(1497132001000L),
                     kbh);
 
 

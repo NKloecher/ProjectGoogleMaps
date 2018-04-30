@@ -49,9 +49,9 @@ public class DiaryEntryStorage {
         return db.update(TABLE_NAME,values, "_id=?", new String[] {Long.toString(diaryEntry.getId())});
     }
 
-    public long remove(DiaryEntry diaryEntry) {
+    public long remove(long id) {
         SQLiteDatabase db = openHelper.getWritableDatabase();
-        return db.delete(TABLE_NAME, "_id=?", new String[] {Long.toString(diaryEntry.getId())});
+        return db.delete(TABLE_NAME, "_id=?", new String[] {Long.toString(id)});
     }
 
     public DiaryEntry get(long id){
