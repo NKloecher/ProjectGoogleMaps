@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addTripToMap(Trip trip) {
         Resources resources = MainActivity.this.getResources();
-        Bitmap icon = BitmapFactory.decodeResource(resources, R.drawable.ic_place_black_24dp);
+        Bitmap icon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_map_marker), 90, 90, false);
         float scale = resources.getDisplayMetrics().density;
         int textSize = (int) (15 * scale);
         Rect bounds = new Rect();
