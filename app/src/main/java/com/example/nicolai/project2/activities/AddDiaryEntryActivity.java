@@ -35,14 +35,16 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
     private LatLng location;
     private Date date;
     long trip_id;
+    long entry_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_diary_entry);
         trip_id = getIntent().getLongExtra(TRIP_ID,-1);
-        if (getIntent().getLongExtra(ENTRY_ID,-1) != -1){
-            new FillTemplateAsyncTask(getIntent().getLongExtra(ENTRY_ID,-1)).execute();
+        entry_id = getIntent().getLongExtra(ENTRY_ID, -1);
+        if (entry_id != -1){
+            new FillTemplateAsyncTask(entry_id).execute();
         }
 
         Calendar cal = Calendar.getInstance();
@@ -94,42 +96,42 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
         }
     }
 
-    class FillTemplateAsyncTask extends AsyncTask<Void, Void,Void>{
+    public void onSendAsMailClick(View view) {
+        Intent i = new Intent(this, ContactGroupListActivity.class);
+        i.putExtra(ContactGroupListActivity.DIARY_ENTRY_ID_EXTRA, entry_id);
+        startActivity(i);
+    }
+
+    class FillTemplateAsyncTask extends AsyncTask<Void, Void,DiaryEntry>{
         long id;
         public FillTemplateAsyncTask(long id) {
             this.id = id;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected DiaryEntry doInBackground(Void... voids) {
             DiaryEntryStorage storage = DiaryEntryStorage.getInstance(AddDiaryEntryActivity.this);
-            final DiaryEntry entry = storage.get(id);
-            Log.d("debug", entry.toString());
+            return storage.get(id);
+        }
 
+        @Override
+        protected void onPostExecute(DiaryEntry entry) {
             final EditText titleText = findViewById(R.id.title);
             final EditText descText = findViewById(R.id.desc);
             final TextView locationText = findViewById(R.id.locationTxt);
             final TextView dateText = findViewById(R.id.dateTxt);
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                titleText.setText(entry.getTitle());
-                descText.setText(entry.getDescription());
+            titleText.setText(entry.getTitle());
+            descText.setText(entry.getDescription());
 
 //                locationText.setText(entry.getLocation().toString());
-                locationText.setText(entry.getTitle());
-                location = entry.getLocation();
+            locationText.setText(entry.getTitle());
+            location = entry.getLocation();
 
-                dateText.setText(String.format("%s/%s/%s", entry.getDate().getYear()+1900,entry.getDate().getMonth()+1,
-                        entry.getDate().getDate()));
-                date = entry.getDate();
-                trip_id = entry.getTrip_id();
-                    //dates..... so fucked.....
-
-                }
-            });
-            return null;
+            dateText.setText(String.format("%s/%s/%s", date.getYear()+1900,date.getMonth()+1,date.getDate()));
+            date = entry.getDate();
+            trip_id = entry.getTrip_id();
+            //dates..... so fucked.....
         }
 
     }
