@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,15 +38,7 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     private boolean fragmentIsMap = true;
 
-    //TODO Decide -> Size of desc for DiaryEntries might be too big for snippet
-    //TODO cont -> Make a custom infoView to handle it? or Other solution?
-
-    //TODO style toolbar + ContextMenu (delete trip) -> Can't context menu infowindow
-    //TODO 27/04 -> ContextMenu onOptionsItemSelected ->
-    //TODO setMapToolbarEnabled(boolean) -> for at fjerne original funktioner
-    //TODO Change OptionsMenu depending on fragment -> MoveToList or MoveToMap
-
-    //TODO Ambitious -> Make both a listview and the map-view -> can change via toolbar context menu
+    //TODO Style the custom info window, for better appearance
 
     public static final String TRIP_TITLE = "TRIP_TITLE";
     public static final String TRIP_ID = "TRIP_ID"; //trip id for diary selection
@@ -148,7 +141,7 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private static final int ADD_ENTRY_REQUEST = 2;
-    private static final int UPDATE_ENTRY_REQUEST = 3;
+    public static final int UPDATE_ENTRY_REQUEST = 3;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -235,7 +228,7 @@ public class DiaryEntryActivity extends AppCompatActivity implements OnMapReadyC
         protected void onPostExecute(DiaryEntry diaryEntry) {
             if (fragmentIsMap) addEntryToMap(diaryEntry);
             else {
-                listFragment.runAsync();
+                listFragment.runAsync(diaryEntry.getTrip_id());
             }
         }
     }

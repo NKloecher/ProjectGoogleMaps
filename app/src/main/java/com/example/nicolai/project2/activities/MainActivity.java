@@ -34,8 +34,6 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Todo fucking dates man
-
     private GoogleMap map;
     private LatLngBounds.Builder builder = new LatLngBounds.Builder();
 

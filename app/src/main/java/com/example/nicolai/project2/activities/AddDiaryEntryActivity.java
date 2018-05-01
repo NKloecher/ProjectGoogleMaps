@@ -40,8 +40,7 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_diary_entry);
-
-        Log.d("debug",getIntent().getLongExtra(ENTRY_ID,-1)+": entry id");
+        trip_id = getIntent().getLongExtra(TRIP_ID,-1);
         if (getIntent().getLongExtra(ENTRY_ID,-1) != -1){
             new FillTemplateAsyncTask(getIntent().getLongExtra(ENTRY_ID,-1)).execute();
         }
@@ -126,7 +125,7 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
                         entry.getDate().getDate()));
                 date = entry.getDate();
                 trip_id = entry.getTrip_id();
-                    //TODO dates..... so fucked.....
+                    //dates..... so fucked.....
 
                 }
             });
@@ -187,7 +186,7 @@ public class AddDiaryEntryActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra(ENTRY_ID, id);
             setResult(RESULT_OK, intent);
-            finish(); //todo fails to update listview on update or insert?!
+            finish();
         }
     }
 }

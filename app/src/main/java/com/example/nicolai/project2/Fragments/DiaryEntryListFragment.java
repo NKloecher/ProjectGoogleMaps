@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.nicolai.project2.R;
 import com.example.nicolai.project2.activities.AddDiaryEntryActivity;
+import com.example.nicolai.project2.activities.DiaryEntryActivity;
 import com.example.nicolai.project2.storage.DiaryEntryStorage;
 
 import java.text.DateFormat;
@@ -67,7 +69,7 @@ public class DiaryEntryListFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public void runAsync(){
+    public void runAsync(long trip_id){
         new GetDiaryEntriesAsyncTask().execute();
     }
 
@@ -75,6 +77,8 @@ public class DiaryEntryListFragment extends android.support.v4.app.Fragment {
 
         private final long CEST_CORRECTION = 7200 * 1000;
         private DiaryEntryStorage storage;
+
+        public GetDiaryEntriesAsyncTask(){}
 
         @Override
         protected DiaryEntryStorage.DiaryEntryWrapper doInBackground(Void... voids) {
@@ -84,7 +88,7 @@ public class DiaryEntryListFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(DiaryEntryStorage.DiaryEntryWrapper diaryEntryWrapper) {
-            //todo move this to background thread?
+            //move this to background thread?
             View view = getView();
             if (adapter == null){
                 adapter = new SimpleCursorAdapter(
@@ -96,13 +100,14 @@ public class DiaryEntryListFragment extends android.support.v4.app.Fragment {
                         0);
                 ListView list = view.findViewById(R.id.diary_fragment_list);
                 list.setAdapter(adapter);
-                registerForContextMenu(list); //todo clickListener too? or maybe just add all to contextmenu
+                registerForContextMenu(list);
                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Intent intent = new Intent(getContext(), AddDiaryEntryActivity.class);
                         intent.putExtra(AddDiaryEntryActivity.ENTRY_ID, id);
-                        startActivityForResult(intent, 3);
+                        intent.putExtra(AddDiaryEntryActivity.TRIP_ID, trip_id);
+                        getActivity().startActivityForResult(intent, DiaryEntryActivity.UPDATE_ENTRY_REQUEST);
                     }
                 });
             } else {

@@ -86,7 +86,7 @@ public class DiaryEntryStorage {
             String[] location = getString(getColumnIndex(LOCATION)).split(",");
             LatLng latLng = new LatLng(Double.parseDouble(location[0]), Double.parseDouble(location[1]));
             Date date = new Date(getString(getColumnIndex(DATE)));
-            Log.d("debug", "Wrapper Date: " + date.toString());
+//            Log.d("debug", "Wrapper Date: " + date.toString());
             return new DiaryEntry(
                     getInt(getColumnIndex(_id)),
                     getString(getColumnIndex(TITLE)),
